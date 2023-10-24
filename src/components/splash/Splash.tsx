@@ -3,10 +3,7 @@
 import React, { useState } from "react";
 import {
   Box,
-  IconButton,
-  useBreakpointValue,
-  Stack,
-  Heading,
+
   Text,
   Container,
   Highlight,
@@ -14,14 +11,11 @@ import {
   HStack,
   Button,
 } from "@chakra-ui/react";
-// Here we have used react-icons package for the icons
-import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
-// And react-slick as our Carousel Lib
+
 import Slider from "react-slick";
 import { imgSplash, imgSplash1 } from "@/utils/assets";
 import MainButton from "../Button";
-import { useAppDispatch } from "@/app/store";
-import { setShow, setView } from "@/app/store/slices/splashSlice";
+import {FC, } from 'react'
 
 // Settings for the slider
 const settings = {
@@ -33,11 +27,17 @@ const settings = {
   slidesToShow: 1,
   slidesToScroll: 1,
 };
+type Props = {
+  setSlider: (slider: Slider | null) => void,
+  prev: () => void,
+  next: () => void,
+  skip: () => void,
+  active: number,
 
-export default function CaptionCarousel() {
-  const [slider, setSlider] = React.useState<Slider | null>(null);
-  const [active, setActive] = useState(0);
-  const dispatch = useAppDispatch();
+}
+
+const SplashView:FC<Props> = ({setSlider, prev, next, skip, active}) => {
+ 
 
 
   const cards = [
@@ -54,29 +54,7 @@ export default function CaptionCarousel() {
     },
   ];
 
-  const next = () => {
-    if(active < 1) {
-        slider?.slickNext();
-
-    setActive(active+1);
-    } else {
-        dispatch(setView(true));
-      dispatch(setShow(true));
-    }
-  };
-  const prev = () => {
-    if(active > 0) {
-        slider?.slickPrev();
-
-    setActive(active-1);
-    }
-  };
-
-  const skip = () => {
-    dispatch(setView(false));
-      dispatch(setShow(true));
-  }
-
+  
   return (
     <Box position={"relative"} width={"full"} overflow={"hidden"}>
       <link
@@ -160,3 +138,4 @@ export default function CaptionCarousel() {
     </Box>
   );
 }
+export default SplashView
