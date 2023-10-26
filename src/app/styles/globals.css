@@ -37,6 +37,20 @@ body {
       var(--bg-color)
     ) !important;
 }
+.bg-color-left {
+  background: linear-gradient(
+      to left,
+      #fff,
+      var(--bg-color)
+    ) !important;
+}
+.bg-color-right {
+  background: linear-gradient(
+      to right,
+      #fff,
+      var(--bg-color)
+    ) !important;
+}
 img {
   width: 100%; 
 }

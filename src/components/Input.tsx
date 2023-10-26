@@ -14,7 +14,7 @@ const MainInput:FC<Props> = ({onChange, ph = "Search...", bg = 'inputBlue', colo
     <InputLeftElement pointerEvents='none' pl={5} pr={2.5}>
       <SearchIcon color={color}/>
     </InputLeftElement>
-    <Input onChange={(e) => onChange(e.target.value)} bg={bg} type='text' placeholder={ph} color={'black'} _placeholder={{ color: color}} border={'none'} pr={5} borderRadius={27}/>
+    <Input onChange={(e) => onChange(e.target.value)}  bg={bg} type='text' placeholder={ph} color={'black'} _placeholder={{ color: color}} border={'none'} pr={5} borderRadius={27}/>
   </InputGroup>
     )
 }

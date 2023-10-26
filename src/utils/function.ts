@@ -19,3 +19,9 @@ export function currency(value: string) {
     copy+='₮'
     return copy
 }
+
+export function bankHide(value: string) {
+
+ let copy =   value.substring(0 , 4) + ("*".repeat(value.length - 8)) + value.substring(value.length-4)
+    return copy.substring(0, 4) + " " + copy.substring(4, 8) + " " + copy.substring(8, 12) + " " + copy.substring(12)
+}

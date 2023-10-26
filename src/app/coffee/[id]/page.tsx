@@ -18,19 +18,31 @@ import {
 import { useState } from "react";
 import { SupportButton } from "@/components/Button";
 import { currency } from "@/utils/function";
-import { AiOutlinePlusCircle, AiFillStar } from "react-icons/ai";
+import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 export default function CoffeeDetail({ params }: { params: { id: string } }) {
   const [active, setActive] = useState(0);
   const setView = (value: number) => {
     setActive(value);
   };
   const [sliderValue, setSliderValue] = useState(50);
-
+  const [orderCount, setOrderCount] = useState(1)
   const labelStyles = {
     mt: "2",
     ml: "-2.5",
     fontSize: "sm",
   };
+
+  const router = useRouter()
+
+  const order = async () => {
+    try {
+   
+      router.push(`/order/asdf`)
+    } catch (error) {
+      
+    }
+  }
   return (
     <Box
       className="bg-color"
@@ -90,25 +102,29 @@ export default function CoffeeDetail({ params }: { params: { id: string } }) {
               Захиалга
             </Text>
             <HStack>
+             {orderCount > 1 &&  <Button onClick={() => {setOrderCount(orderCount-1)}} zIndex={6} p={0}>
+                <Icon as={AiOutlineMinusCircle} boxSize={12} color={"white"} />
+              </Button>}
               <Text
                 fontSize={22}
                 fontWeight={"bold"}
                 color={"white"}
                 letterSpacing={"-0.02"}
-                mr={0}
+                mx={0}
+                
               >
-                1
+                {orderCount}
               </Text>
-              <Button onClick={() => {}} zIndex={6} p={0}>
+              <Button onClick={() => {setOrderCount(orderCount+1)}} zIndex={6} p={0}>
                 <Icon as={AiOutlinePlusCircle} boxSize={12} color={"white"} />
               </Button>
             </HStack>
           </HStack>
-          <HStack justifyContent={"space-between"} w={"full"} px={8}>
-            <SupportButton onClick={() => {}} m={0}>
+          <HStack justifyContent={"space-between"} w={"full"} px={8} zIndex={5}>
+            <SupportButton onClick={order} m={0}>
               <Text>Add to order</Text>
             </SupportButton>
-            <Text fontSize={18}>Нийт: {currency("30000")}</Text>
+            <Text fontSize={18}>Нийт: {currency(`${30000 * orderCount}`)}</Text>
           </HStack>
         </VStack>
         <VStack
@@ -273,7 +289,7 @@ export default function CoffeeDetail({ params }: { params: { id: string } }) {
             </Text>
             <HStack>
               {[0,1,2,3,4].map((e, i) => {
-                return <Image src={imgStar} w={6} ml={2.25}/>
+                return <Image src={imgStar} w={6} ml={2.25} key={i}/>
               })}
             </HStack>
           </HStack>

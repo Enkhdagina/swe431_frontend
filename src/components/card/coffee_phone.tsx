@@ -14,20 +14,22 @@ import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import {FC} from 'react'
 import { Coffee } from "@/model/coffee";
 import MainButton from "../Button";
+import { imgUrl } from "@/utils/values";
+import { useRouter } from "next/navigation";
 
 type Props = {
     data: Coffee
     basket: () => void ,
-    order: () => void ,
-    push: () => void
+    heart: boolean
+
 }
 
-const CoffeePhoneCard:FC<Props> = ({data, basket, order, push}) => {
-  
+const CoffeePhoneCard:FC<Props> = ({data, basket,heart }) => {
+  const router = useRouter()
   return (
     <VStack w={142} pos={'relative'}>
       <Image
-        src={`https://res.cloudinary.com/dg2laerve/image/upload/${data.img}`}
+        src={`${imgUrl}${data.img}`}
         zIndex={1}
       />
       <VStack
@@ -61,11 +63,11 @@ const CoffeePhoneCard:FC<Props> = ({data, basket, order, push}) => {
           <Text fontSize={16} fontWeight={"bold"}>
             {currency(`${data.price}`)}
           </Text>
-          <Button onClick={basket}><Icon as={AiFillHeart} boxSize={5} color={'red'}/></Button>
+          <Button onClick={basket} pl={2} pr={0} zIndex={2}><Icon as={AiFillHeart} boxSize={5} color={ heart ? 'red' : 'white'}/></Button>
         </HStack>
-      <Box pos={'absolute'} inset={0} zIndex={0} onClick={push}/>
+      <Box pos={'absolute'} inset={0} zIndex={0} onClick={() => router.push(`/coffee/${data.id}`)}/>
       </VStack>
-      <MainButton onClick={order} px={2.5} py={1.5}><Text color={'white'}  fontSize={15}>Order Now</Text></MainButton>
+      <MainButton onClick={() => {router.push(`/order/${data.id}`)}} px={2.5} py={1.5}><Text color={'white'}  fontSize={15}>Order Now</Text></MainButton>
     </VStack>
   );
 };
