@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   Box,
-
   Text,
   Container,
   Highlight,
@@ -15,7 +14,7 @@ import {
 import Slider from "react-slick";
 import { imgSplash, imgSplash1 } from "@/utils/assets";
 import MainButton from "../Button";
-import {FC, } from 'react'
+import { FC } from "react";
 
 // Settings for the slider
 const settings = {
@@ -28,18 +27,14 @@ const settings = {
   slidesToScroll: 1,
 };
 type Props = {
-  setSlider: (slider: Slider | null) => void,
-  prev: () => void,
-  next: () => void,
-  skip: () => void,
-  active: number,
+  setSlider: (slider: Slider | null) => void;
+  prev: () => void;
+  next: () => void;
+  skip: () => void;
+  active: number;
+};
 
-}
-
-const SplashView:FC<Props> = ({setSlider, prev, next, skip, active}) => {
- 
-
-
+const SplashView: FC<Props> = ({ setSlider, prev, next, skip, active }) => {
   const cards = [
     {
       title: "ТАВТАЙ МОРИЛНО УУ!",
@@ -54,9 +49,13 @@ const SplashView:FC<Props> = ({setSlider, prev, next, skip, active}) => {
     },
   ];
 
-  
   return (
-    <Box position={"relative"} width={"full"} overflow={"hidden"}>
+    <Box
+      position={"relative"}
+      width={"full"}
+      overflow={"hidden"}
+      display={{ md: "none", base: "flex" }}
+    >
       <link
         rel="stylesheet"
         type="text/css"
@@ -77,7 +76,7 @@ const SplashView:FC<Props> = ({setSlider, prev, next, skip, active}) => {
             flexDir={"column"}
             justifyContent={"center"}
             alignItems={"center"}
-            m={'auto'}
+            m={"auto"}
           >
             <Box className="bg-color">
               <Image src={card.image} />
@@ -116,26 +115,31 @@ const SplashView:FC<Props> = ({setSlider, prev, next, skip, active}) => {
             </HStack>
             <Box h={3} />
             <HStack>
-            {active != 0 && <MainButton
-            
-              onClick={prev}
-            >
-              Буцах
-            </MainButton>}
-            <MainButton
-            px={active != 0 ? 10 : 70}
-            py={active != 0 ? 3 : 4}
-              onClick={next}
-            >
-              Дараах
-            </MainButton>
+              {active != 0 && <MainButton onClick={prev}>Буцах</MainButton>}
+              <MainButton
+                px={active != 0 ? 10 : 70}
+                py={active != 0 ? 3 : 4}
+                onClick={next}
+              >
+                Дараах
+              </MainButton>
             </HStack>
-            <Box h={2}/>
-            {active == 0 && <Button onClick={skip} m={'auto'} fontWeight={'bold'} fontSize={14} display={'flex'}>Алгасах</Button>}
+            <Box h={2} />
+            {active == 0 && (
+              <Button
+                onClick={skip}
+                m={"auto"}
+                fontWeight={"bold"}
+                fontSize={14}
+                display={"flex"}
+              >
+                Алгасах
+              </Button>
+            )}
           </Box>
         ))}
       </Slider>
     </Box>
   );
-}
-export default SplashView
+};
+export default SplashView;

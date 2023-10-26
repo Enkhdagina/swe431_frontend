@@ -3,12 +3,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface IAuthState {
   isAuth: boolean;
-  jid: string;
+  token: string;
 }
 
 const initialState: IAuthState = {
   isAuth: false,
-  jid: "",
+  token: "",
 };
 
 export const authSlice = createSlice({
@@ -18,13 +18,13 @@ export const authSlice = createSlice({
     setAuth: (state, action: PayloadAction<boolean>) => {
       state.isAuth = action.payload;
     },
-    setJid: (state, action: PayloadAction<string>) => {
-      state.jid = action.payload;
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setAuth, setJid } = authSlice.actions;
+export const { setAuth, setToken } = authSlice.actions;
 
 export const authReducer = authSlice.reducer;

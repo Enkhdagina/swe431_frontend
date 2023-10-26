@@ -6,6 +6,7 @@ import storage from "./customStorage";
 import logger from "redux-logger";
 import { splashReducer } from "./slices/splashSlice";
 import { basketReducer } from "./slices/basketSlice";
+import { userReducer } from "./slices/userSlice";
 
 const authPersistConfig = {
   key: "auth",
@@ -22,11 +23,17 @@ const basketPersistConfig = {
   storage: storage,
   whitelist: ["setBasket", "updateBasket"],
 };
+const userPersistConfig = {
+  key: "user",
+  storage: storage,
+  whitelist: ["setUser"],
+};
 
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   splash: persistReducer(splashPersistConfig, splashReducer),
   basket: persistReducer(basketPersistConfig, basketReducer),
+  // user: persistReducer(userPersistConfig, userReducer),
 });
 
 export const store = configureStore({
