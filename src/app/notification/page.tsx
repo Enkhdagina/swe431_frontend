@@ -5,16 +5,17 @@ import { Box, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { store, useAppDispatch } from "../store";
 import { useRouter } from "next/navigation";
+import { useCookies } from "react-cookie";
 
 const NotificationPage = () => {
   const dispatch = useAppDispatch();
-  const token = store.getState().auth.token;
+  const [cookies] = useCookies(['token'])
   const router = useRouter();
   useEffect(() => {
-    if (token == "") {
+    if (cookies['token'] == undefined) {
       router.push("/auth");
     }
-  }, [token]);
+  }, [cookies['token']]);
   return (
     <Box
       pos={"relative"}

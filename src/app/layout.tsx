@@ -13,7 +13,7 @@ import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import { usePathname } from "next/navigation";
 import { CookiesProvider, useCookies } from "react-cookie";
-import { setToken } from "./store/slices/authSlice";
+
 export default function RootLayout({
   children,
 }: {

@@ -23,15 +23,15 @@ const OrderBasketCard: FC<Types> = ({ data, add, minus }) => {
   return (
     <Box borderRadius={21} bg={"white"} w={"full"}>
       <HStack w={"full"} px={4} py={5}>
-        <Image src={`${imgUrl}${data.coffee.img}`} h={135} />
+        <Image src={`${imgUrl}${data.product.img}`} h={135} />
         <VStack alignItems={"start"} w={"full"}>
           <VStack alignItems={"start"}>
             <Text fontSize={21} color={"brown"} mb={2} fontWeight={"bold"}>
-              {data.coffee.name}
+              {data.product.name}
             </Text>
             <Text fontSize={18} color={"brown"}>
               Нийт:{" "}
-              {currency((data.coffee?.price ?? 0 * data.quantity).toString())}
+              {currency((data.product?.price ?? 0 * data.quantity).toString())}
             </Text>
           </VStack>
           <HStack w={"full"} justifyContent={'space-between'}>

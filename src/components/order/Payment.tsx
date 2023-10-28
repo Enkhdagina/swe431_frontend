@@ -1,4 +1,4 @@
-import { payments } from '@/utils/values'
+
 import {
     AlertDialog,
     AlertDialogBody,
@@ -14,21 +14,22 @@ import {
 import { PaymentTypeCard } from '../card/payment'
 import MainButton from '../Button'
 import { PaymentType } from '@/utils/enum'
+import { Payment } from '@/model/payment'
 
 type Types = {
     onClose: () => void,
  
     setState: (value: PaymentType) => void,
     isOpen: boolean,
-
-    type: PaymentType
+    payments?: Payment[],
+    type?: PaymentType
 
 }
 
-const PaymentAlert:FC<Types> = ({onClose,  isOpen,  setState, type}) =>  {
+const PaymentAlert:FC<Types> = ({onClose,  isOpen, payments,  setState, type}) =>  {
 
     const cancelRef = useRef< any>()
-  
+
     return (
       <>
   
@@ -50,9 +51,9 @@ const PaymentAlert:FC<Types> = ({onClose,  isOpen,  setState, type}) =>  {
 хэлбэрээ сонгоно уу.</Text>
                 <VStack w={'full'} mt={5}>
                     {
-                        payments.map((payment, index) => {
+                        payments?.map((payment, index) => {
                             return (<Box key={index} w={'full'} mb={index != payments.length - 1 ? 3 : 8}>
-                                <PaymentTypeCard data={payment} onClick={() => setState(payment.type) } active={payment.type == type}/>
+                                <PaymentTypeCard payment={payment} onClick={() => setState(payment.type) } active={payment.type == type}/>
                             </Box>)
                         })
                     }

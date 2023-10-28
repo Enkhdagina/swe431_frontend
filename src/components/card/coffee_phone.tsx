@@ -27,10 +27,11 @@ type Props = {
 const CoffeePhoneCard:FC<Props> = ({data, basket,heart }) => {
   const router = useRouter()
   return (
-    <VStack w={142} pos={'relative'}>
+    <VStack w={142}  pos={'relative'}>
       <Image
         src={`${imgUrl}${data.img}`}
         zIndex={1}
+        maxH={185}
       />
       <VStack
         mt={-70}
@@ -65,9 +66,9 @@ const CoffeePhoneCard:FC<Props> = ({data, basket,heart }) => {
           </Text>
           <Button onClick={basket} pl={2} pr={0} zIndex={2}><Icon as={AiFillHeart} boxSize={5} color={ heart ? 'red' : 'white'}/></Button>
         </HStack>
-      <Box pos={'absolute'} inset={0} zIndex={0} onClick={() => router.push(`/coffee/${data.id}`)}/>
+      <Box pos={'absolute'} inset={0} zIndex={0} onClick={() => router.push(`/coffee/${data._id}`)}/>
       </VStack>
-      <MainButton onClick={() => {router.push(`/order/${data.id}`)}} px={2.5} py={1.5}><Text color={'white'}  fontSize={15}>Order Now</Text></MainButton>
+      <MainButton onClick={() => {router.push(`/order/${data._id}`)}} px={2.5} py={1.5}><Text color={'white'}  fontSize={15}>Order Now</Text></MainButton>
     </VStack>
   );
 };

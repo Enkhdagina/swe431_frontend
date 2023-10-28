@@ -1,5 +1,5 @@
 "use client";
-import { imgHeart } from "@/utils/assets";
+import { imgEmpty, imgHeart } from "@/utils/assets";
 import { Box, HStack, Image, Text, VStack } from "@chakra-ui/react";
 
 import Slider from "react-slick";
@@ -9,18 +9,43 @@ import { useRouter } from "next/navigation";
 import Loader from "@/components/Loader";
 import { store, useAppDispatch } from "../store";
 import { updateBasket } from "../store/slices/basketSlice";
-import { data } from "@/utils/values";
+
 import { useCookies } from "react-cookie";
+import { Coffee } from "@/model/coffee";
+import { api } from "@/utils/values";
+import { User } from "@/model/user";
+import Head from "next/head";
+import CoffeeCard from "@/components/card/coffee";
 
 const BasketPage = () => {
   const [coffeeSlider, setCoffeeSlider] = useState<Slider | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [baskets, setBaskets] = useState(store.getState().basket.ids);
   const dispatch = useAppDispatch();
-  const token = store.getState().auth.token;
-  const basket = (id: string) => {
-    dispatch(updateBasket(id));
-    setBaskets(store.getState().basket.ids);
+  const [counts, setCounts] = useState<number[]>([]);
+  const [cookies] = useCookies(['token'])
+  const [data, setData] = useState<Coffee[] >([])
+  const basket = async (id: string) => {
+    if (cookies['token'] == undefined) {
+      router.push("/auth");
+    } else {
+      dispatch(updateBasket(id));
+      setData(data.filter((d) => d._id != id))
+     
+      let res = await fetch(`${api}user/basket/${id}`, {
+        method: "GET",
+        headers: {Authorization: `Bearer ${cookies['token']}`}
+      })
+      let json = await res.json()
+ 
+      if(json.statusCode == undefined) {
+
+     
+      } else {
+        console.log(json);
+      }
+
+    }
+  
   };
   const coffeeSliderSetting = {
     dots: true,
@@ -33,16 +58,36 @@ const BasketPage = () => {
 
     initialSlide: 1,
   };
-  const router = useRouter();
 
+  const router = useRouter();
+  const getBasket = async () => {
+    try {
+   
+      await fetch(`${api}product/basket`, {
+        method: 'POST',
+        headers: {Authorization: `Bearer ${cookies['token']}`}
+      }).then((d) => d.json()).then((d: Coffee[]) => {
+      
+            setData(d)
+            setCounts(Array.from(Array(d.length).fill(1)));
+
+      } )
+    } catch (error) {
+      
+    }
+  }
   useEffect(() => {
     setMounted(true);
+
   }, []);
   useEffect(() => {
-    if (token == "") {
+    if (cookies['token'] == undefined) {
       router.push("/auth");
     }
-  }, [token]);
+    else {
+      getBasket()
+    }
+  }, []);
 
   if (!mounted) {
     return (
@@ -59,35 +104,91 @@ const BasketPage = () => {
       display={"flex"}
       zIndex={10}
       alignItems={"center"}
-      className="bg-color"
+      className="bg-color "
       w={"full"}
       pb={20}
+      
       px={4}
       pt={20}
     >
+     
+       
+      {
+        data.length == 0 ? <VStack w={'full'}>
+<Image src={imgEmpty} mt={120} px={12} mx={'auto'} maxW={400}/>
+        <Text fontSize={30} letterSpacing={'-0.02'}>Уучлаарай</Text>
+<Text fontSize={30} letterSpacing={'-0.02'}>Таны сагс хоосон байна!</Text>
+        </VStack> :
+      <Box w={'full'} position={"relative"} width={"full"} overflow={"hidden"}>
       <Image src={imgHeart} px={12} mx={"auto"} maxW={400} />
       <HStack w={"full"} mb={4}>
         <Text>My lists</Text>
       </HStack>
-      <Box position={"relative"} width={"full"} overflow={"hidden"}>
-        <link
-          rel="stylesheet"
-          type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
-        />
-        <link
-          rel="stylesheet"
-          type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-        />
+     
+      </Box>}
+      {data.length > 0 && <Box
+        display={{ md: "flex", base: "none" }}
+        alignItems={"center"}
+        flexDir={"column"}
+      > {data.map((d, index) => {
+        return (
+          <Box
+            key={index}
+            w={"full"}
+            my={index != data.length - 1 ? 10 : 0}
+          >
+            <CoffeeCard
+              data={d}
+              index={index}
+              basket={() => {
+       
+                basket(d._id);
+                
+              }}
+              quantity={counts[index]}
+              minus={() => {
+                if (counts[index] > 1) {
+                  setCounts((prev) => ({
+                    ...prev,
+                    [index]: counts[index] - 1,
+                  }));
+                }
+              }}
+              plus={() => {
+                setCounts((prev) => ({
+                  ...prev,
+                  [index]: counts[index] + 1,
+                }));
+              }}
+              heart={true}
+            />
+          </Box>
+        );
+      })}</Box>}
+      {data.length > 0 && <Box
+        className="min-h-screen"
+        pos={"relative"}
+        flexDir={"column"}
+        display={{ md: "none", base: "flex" }}
+        w={'full'}
+   
+      > <Box position={"relative"} width={"full"} overflow={"hidden"}>
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
+          />
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
+          />
 
-        <Slider
-          {...coffeeSliderSetting}
-          ref={(slider) => setCoffeeSlider(slider)}
-        >
-          {data
-            .filter((d) => baskets.includes(d.id))
-            .map((d, index) => {
+          <Slider
+            {...coffeeSliderSetting}
+            ref={(slider) => setCoffeeSlider(slider)}
+          >
+            {data.map((d, index) => {
               return (
                 <Box
                   key={index}
@@ -100,15 +201,17 @@ const BasketPage = () => {
                   <CoffeePhoneCard
                     data={d}
                     basket={() => {
-                      basket(d.id);
+                      basket(d._id);
                     }}
-                    heart={true}
+                    heart={
+                     true
+                    }
                   />
                 </Box>
               );
             })}
-        </Slider>
-      </Box>
+          </Slider>
+        </Box> </Box>}
     </Box>
   );
 };

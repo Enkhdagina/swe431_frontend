@@ -34,12 +34,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { FaShoppingBasket } from "react-icons/fa";
-import { ImHome3 } from "react-icons/im";
+import { ImExit, ImHome3 } from "react-icons/im";
 import { BsPersonCircle } from "react-icons/bs";
 import { store, useAppDispatch } from "@/app/store";
 import { updateBasket } from "@/app/store/slices/basketSlice";
 import { useCookies } from "react-cookie";
-import { setToken } from "@/app/store/slices/authSlice";
+
 
 export default function Navbar({
   path,
@@ -63,7 +63,7 @@ export default function Navbar({
   };
   const logout = () => {
     removeCookie("token");
-    dispatch(setToken(""));
+ 
     onClose();
     router.push("/auth");
   };
@@ -127,7 +127,10 @@ export default function Navbar({
             <Icon as={AiOutlineHeart} boxSize={27} mr={2} />
           </Link>
           <Link href="/order">
-            <Icon as={FaShoppingBasket} boxSize={27} />
+            <Icon as={FaShoppingBasket} boxSize={27} mr={2}/>
+          </Link>
+          <Link onClick={logout}>
+            <Icon as={ImExit} boxSize={27} />
           </Link>
         </HStack>
       </HStack>

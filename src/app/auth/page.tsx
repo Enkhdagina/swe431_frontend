@@ -5,6 +5,7 @@ import {
   AbsoluteCenter,
   Box,
   Button,
+  Alert,
   Checkbox,
   Divider,
   HStack,
@@ -19,6 +20,7 @@ import {
   TabPanels,
   Tabs,
   Text,
+  AlertIcon,
   VStack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
@@ -29,12 +31,17 @@ import { BsFacebook, BsGithub, BsGoogle } from "react-icons/bs";
 import { FaUser, FaUserSecret } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useDispatch } from "react-redux";
-import { setToken } from "../store/slices/authSlice";
+
+import { api } from "@/utils/values";
+
+
+
 type Types = {
   username: string;
   password: string;
   email?: string;
   repeatPassword?: string;
+  message?: string;
 };
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -43,17 +50,68 @@ const Auth = () => {
   const [data, setData] = useState<Types>({
     username: "",
     password: "",
+    email: "",
+    repeatPassword: "",
+    message: "",
   });
   const router = useRouter();
+ 
   const login = async () => {
     try {
-      setCookies("token", "asdf");
-      dispatch(setToken("asdf"));
-      router.back();
+      let res = await fetch(`${api}auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: data.username,
+          password: data.password,
+        }),
+      });
+      let json = await res.json();
+      if (json.access_token != undefined && json.access_token != null) {
+        setCookies("token", json.access_token);
+   
+    
+   
+        router.back();
+      } else {
+        setData((prev) => ({
+          ...prev,
+          message: "Нэвтрэх нэр, нууц үгээ шалгана уу",
+        }));
+      }
     } catch (error) {}
   };
   const register = async () => {
     try {
+     if(data.password != data.repeatPassword && data.password.length < 6 ) {
+      setData((prev)=> ({...prev, message: 'Нууц үгээ шалгана уу'}))
+     } else {
+      let res = await fetch(`${api}auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: data.username,
+          password: data.password,
+          email: data.email
+        }),
+      });
+      let json = await res.json();
+      if (json.access_token != undefined && json.access_token != null) {
+        setCookies("token", json.access_token);
+
+    
+        router.back();
+      } else {
+        setData((prev) => ({
+          ...prev,
+          message: "Мэдээллээ шалгана уу",
+        }));
+      }
+     }
     } catch (error) {}
   };
   return (
@@ -110,10 +168,17 @@ const Auth = () => {
               mb={4}
               bg={"transparent"}
               borderColor={"blackAlpha.500"}
+              type="password"
               onChange={(e) =>
                 setData((prev) => ({ ...prev, password: e.target.value }))
               }
             />
+            {data.message != "" && (
+              <Alert status="warning" mb={4}>
+                <AlertIcon />
+                {data.message}
+              </Alert>
+            )}
             <HStack w={"full"} justifyContent={"space-between"} mb={4}>
               <Checkbox color={"blackAlpha.700"} defaultChecked>
                 Remember

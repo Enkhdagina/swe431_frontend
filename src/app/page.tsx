@@ -24,26 +24,62 @@ import {
 } from "@/utils/assets";
 import MainButton from "@/components/Button";
 import CoffeeCard from "@/components/card/coffee";
-import { data } from "@/utils/values";
+
 import LocationCard from "@/components/card/location";
 import { BiLogoFacebookCircle } from "react-icons/bi";
 import { FaInstagramSquare, FaTwitter } from "react-icons/fa";
 import { ImYoutube } from "react-icons/im";
+import { api } from "@/utils/values";
+import { useCookies } from "react-cookie";
 
 export default function Home() {
   const isShow = store.getState().splash.isShow;
-  const [baskets, setBaskets] = useState(store.getState().basket.ids);
+  const [baskets, setBaskets] = useState(store.getState().basket.ids ?? []);
+  const [cookies] = useCookies(['token'])
   const [mounted, setMounted] = useState(false);
   const dispatch = useAppDispatch();
   const [coffeeSlider, setCoffeeSlider] = useState<Slider | null>(null);
   const [slider, setSlider] = useState<Slider | null>(null);
   const [coffeeActive, setCoffeeActive] = useState(0);
   const [active, setActive] = useState(0);
+  const [data, setData] = useState<Coffee[]>([]);
+  const [counts, setCounts] = useState<number[]>([]);
   const router = useRouter();
+  const getBasket = async (token: string) => {
+    
+    try {
+       await fetch(`${api}user/basket`, {
+        method: "GET",
+        headers: {Authorization: `Bearer ${token}`}
+      }).then((d) => d.json()).then((d: string[]) => {
+        dispatch(setBasket(d));
+        setBaskets(store.getState().basket.ids)
 
+      })
+    } catch (error) {
+      
+    }
+  }
+  const getProduct = async () => {
+    const res = await fetch(`${api}product`);
+
+    const products = await res.json();
+    setCounts(Array.from(Array(products.length).fill(1)));
+    setData(products);
+  };
   useEffect(() => {
     setMounted(true);
+    getProduct();
+    
   }, []);
+
+  useEffect(() => {
+    if(cookies['token'] != undefined) {
+   
+      getBasket(cookies['token'])
+    }
+  }, [cookies['token']]);
+  
   const next = () => {
     if (active < 1) {
       slider?.slickNext();
@@ -63,9 +99,28 @@ export default function Home() {
     }
   };
 
-  const basket = (id: string) => {
-    dispatch(updateBasket(id));
-    setBaskets(store.getState().basket.ids);
+  const basket = async (id: string) => {
+    if (cookies['token'] == undefined) {
+      router.push("/auth");
+    } else {
+      dispatch(updateBasket(id));
+      setBaskets(store.getState().basket.ids);
+  
+      let res = await fetch(`${api}user/basket/${id}`, {
+        method: "GET",
+        headers: {Authorization: `Bearer ${cookies['token']}`}
+      })
+      let json = await res.json()
+ 
+     
+      if(json.statusCode == undefined) {
+
+      } else {
+        console.log(json);
+      }
+
+    }
+  
   };
 
   const skip = () => {
@@ -179,9 +234,26 @@ export default function Home() {
                   data={d}
                   index={index}
                   basket={() => {
-                    basket(d.id);
+           
+                    basket(d._id);
+                    
                   }}
-                  heart={baskets.find((basket) => basket == d.id) != undefined}
+                  quantity={counts[index]}
+                  minus={() => {
+                    if (counts[index] > 1) {
+                      setCounts((prev) => ({
+                        ...prev,
+                        [index]: counts[index] - 1,
+                      }));
+                    }
+                  }}
+                  plus={() => {
+                    setCounts((prev) => ({
+                      ...prev,
+                      [index]: counts[index] + 1,
+                    }));
+                  }}
+                  heart={baskets.includes(d._id)}
                 />
               </Box>
             );
@@ -394,10 +466,10 @@ Mongolia"
                   <CoffeePhoneCard
                     data={d}
                     basket={() => {
-                      basket(d.id);
+                      basket(d._id);
                     }}
                     heart={
-                      baskets.find((basket) => basket == d.id) != undefined
+                      baskets.includes(d._id)
                     }
                   />
                 </Box>
@@ -449,10 +521,10 @@ Mongolia"
                   <CoffeePhoneCard
                     data={d}
                     basket={() => {
-                      basket(d.id), console.log(d.id);
+                      basket(d._id)
                     }}
                     heart={
-                      baskets.find((basket) => basket == d.id) != undefined
+                      baskets.find((basket) => basket == d._id) != undefined
                     }
                   />
                 </Box>

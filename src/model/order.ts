@@ -4,7 +4,7 @@ import { Payment } from "./payment";
 
 export  interface Order {
     id: string,
-	coffee: Coffee;
+	product: Coffee;
 	quantity: number;
 	address: string;
     type: OrderType,

@@ -1,9 +1,9 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { persistReducer } from "redux-persist";
-import { authReducer } from "./slices/authSlice";
+
 import storage from "./customStorage";
-import logger from "redux-logger";
+
 import { splashReducer } from "./slices/splashSlice";
 import { basketReducer } from "./slices/basketSlice";
 import { userReducer } from "./slices/userSlice";
@@ -30,7 +30,7 @@ const userPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  auth: persistReducer(authPersistConfig, authReducer),
+
   splash: persistReducer(splashPersistConfig, splashReducer),
   basket: persistReducer(basketPersistConfig, basketReducer),
   // user: persistReducer(userPersistConfig, userReducer),
@@ -39,7 +39,7 @@ const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }).concat(logger),
+    getDefaultMiddleware({ serializableCheck: false }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

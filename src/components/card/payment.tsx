@@ -2,7 +2,7 @@
 import { Payment } from "@/model/payment";
 import { PaymentType } from "@/utils/enum";
 import { bankHide } from "@/utils/function";
-import { imgUrl, payments } from "@/utils/values";
+import { imgUrl, } from "@/utils/values";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -18,7 +18,8 @@ import { FC } from "react";
 
 type Types = {
   onClick: () => void;
-  data: Payment;
+  data?: Payment[];
+  payment?: Payment;
   active?: boolean,
   type?: PaymentType
 };
@@ -38,13 +39,14 @@ const PaymentCard: FC<Types> = ({ onClick, data, type }) => {
     >
       <VStack w={"full"} alignItems={"start"}>
         <Text mb={2} letterSpacing={"-0.02"}>
-          Хэлбэр: {payments.find((p) => p.type == type)?.name ?? ''}
+          Хэлбэр: {data?.find((p) => p.type == type)?.name ?? ''}
         </Text>
         <HStack justifyContent={"space-between"} w={"full"} mb={1}>
-          <Image src={`${imgUrl}${data.img}`} w={94} />
+         <HStack>
+         <Image src={`${imgUrl}v1698251138/aacurzycuvcaempc2obs.svg`} w={94} mr={4}/>
           <VStack alignItems={"start"}>
             <Text mb={0.25} letterSpacing={"-0.02"} fontSize={13}>
-              Банк: {data.bank}
+              Банк: {data?.find((p) => p.type == type)?.bank ?? ''}
             </Text>
             <Text
               mb={0.25}
@@ -53,13 +55,14 @@ const PaymentCard: FC<Types> = ({ onClick, data, type }) => {
               fontSize={13}
             >
               {" "}
-              {bankHide(data.accountNumber?.toString() ?? "0")}
+              {bankHide(data?.find((p) => p.type == type)?.accountNumber?.toString() ?? "000000000000")}
             </Text>
             <Text letterSpacing={"-0.02"} color={"#00000080"} fontSize={13}>
               {" "}
-              {data.accountName}
+              {data?.find((p) => p.type == type)?.accountName ?? ''}
             </Text>
           </VStack>
+         </HStack>
           <ChevronRightIcon fontSize={40} color={"green"} />
         </HStack>
         <HStack w="full" justifyContent={"space-between"}>
@@ -80,7 +83,7 @@ const PaymentCard: FC<Types> = ({ onClick, data, type }) => {
 
 export default PaymentCard;
 
-export const PaymentTypeCard: FC<Types> = ({ data, onClick, active }) => {
+export const PaymentTypeCard: FC<Types> = ({ payment, onClick, active, type }) => {
   return (
     <Button
       onClick={onClick}
@@ -96,13 +99,13 @@ export const PaymentTypeCard: FC<Types> = ({ data, onClick, active }) => {
       <HStack w={"full"} justifyContent={"space-between"}>
         <HStack>
         <Box w={62} h={55}>
-          <Image src={`${imgUrl}${data.img}`} h={"100%"} />
+          <Image src={`${imgUrl}${payment?.img ?? ''}`} h={"100%"} />
         </Box>
         <VStack alignItems={'start'}>
           <Text fontWeight={"semibold"} mb={1}>
-            {data.name}
+            {payment?.name ?? ''}
           </Text>
-          <Text color={"#232323"} fontSize={13}>{data.text}</Text>
+          <Text color={"#232323"} fontSize={13}>{payment?.text ?? ''}</Text>
         </VStack>
         </HStack>
         <Box w={6} h={6} borderRadius={'100%'} bg={ 'white'}  border={`solid black ${active ? '1px' : '5px'}`} display={'flex'} >

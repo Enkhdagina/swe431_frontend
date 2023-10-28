@@ -123,7 +123,7 @@ const CoffeeCard: FC<Props> = ({
             bg="brown"
             m={0}
             onClick={() => {
-              router.push(`/order${data.id}`);
+              router.push(`/order/${data._id}?name=${quantity}`, );
             }}
           >
             <Text color={"white"} fontSize={23} fontWeight={"bold"}>
