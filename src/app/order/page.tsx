@@ -65,7 +65,7 @@ export default function Order() {
     <Text fontSize={30} letterSpacing={'-0.02'}>Таны сагс хоосон байна!</Text>
             </VStack> :
         <VStack w={'full'} px={8} alignItems={'start'}>
-            <Text fontWeight={'bold'} fontSize={23} mb={6}>Миний захиалга</Text>
+            <Text fontWeight={'bold'} fontSize={23} mb={6}>Миний захиалгууд</Text>
             <HStack w={'full'}> 
       {data.map((order, index) => {
     return <HStack key={index} justifyContent={'space-between'} >
