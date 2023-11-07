@@ -18,6 +18,7 @@ import Head from "next/head";
 import CoffeeCard from "@/components/card/coffee";
 
 const BasketPage = () => {
+  const [loader, setLoader] = useState(false)
   const [coffeeSlider, setCoffeeSlider] = useState<Slider | null>(null);
   const [mounted, setMounted] = useState(false);
   const dispatch = useAppDispatch();
@@ -62,7 +63,7 @@ const BasketPage = () => {
   const router = useRouter();
   const getBasket = async () => {
     try {
-   
+        setLoader(true)
       await fetch(`${api}product/basket`, {
         method: 'POST',
         headers: {Authorization: `Bearer ${cookies['token']}`}
@@ -72,6 +73,7 @@ const BasketPage = () => {
             setCounts(Array.from(Array(d.length).fill(1)));
 
       } )
+      setLoader(false)
     } catch (error) {
       
     }
@@ -114,7 +116,7 @@ const BasketPage = () => {
      
        
       {
-        data.length == 0 ? <VStack w={'full'}>
+        data.length == 0 && !loader ? <VStack w={'full'}>
 <Image src={imgEmpty} mt={120} px={12} mx={'auto'} maxW={400}/>
         <Text fontSize={30} letterSpacing={'-0.02'}>Уучлаарай</Text>
 <Text fontSize={30} letterSpacing={'-0.02'}>Таны сагс хоосон байна!</Text>
