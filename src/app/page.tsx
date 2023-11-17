@@ -7,7 +7,7 @@ import Slider from "react-slick";
 import { setShow, setView } from "./store/slices/splashSlice";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loader";
-import { Box, HStack, Text, Link, Image, VStack, Icon } from "@chakra-ui/react";
+import { Box, HStack, Text, Link, Image, VStack, Icon, SlideFade } from "@chakra-ui/react";
 import CoffeePhoneCard from "@/components/card/coffee_phone";
 import { Coffee } from "@/model/coffee";
 import MainInput from "@/components/Input";
@@ -46,18 +46,18 @@ export default function Home() {
   const [counts, setCounts] = useState<number[]>([]);
   const router = useRouter();
   const getBasket = async (token: string) => {
-    
+
     try {
-       await fetch(`${api}user/basket`, {
+      await fetch(`${api}user/basket`, {
         method: "GET",
-        headers: {Authorization: `Bearer ${token}`}
+        headers: { Authorization: `Bearer ${token}` }
       }).then((d) => d.json()).then((d: string[]) => {
         dispatch(setBasket(d));
         setBaskets(store.getState().basket.ids)
 
       })
     } catch (error) {
-      
+
     }
   }
   const getProduct = async () => {
@@ -70,16 +70,16 @@ export default function Home() {
   useEffect(() => {
     setMounted(true);
     getProduct();
-    
+
   }, []);
 
   useEffect(() => {
-    if(cookies['token'] != undefined) {
-   
+    if (cookies['token'] != undefined) {
+
       getBasket(cookies['token'])
     }
   }, [cookies['token']]);
-  
+
   const next = () => {
     if (active < 1) {
       slider?.slickNext();
@@ -105,22 +105,22 @@ export default function Home() {
     } else {
       dispatch(updateBasket(id));
       setBaskets(store.getState().basket.ids);
-  
+
       let res = await fetch(`${api}user/basket/${id}`, {
         method: "GET",
-        headers: {Authorization: `Bearer ${cookies['token']}`}
+        headers: { Authorization: `Bearer ${cookies['token']}` }
       })
       let json = await res.json()
- 
-     
-      if(json.statusCode == undefined) {
+
+
+      if (json.statusCode == undefined) {
 
       } else {
         console.log(json);
       }
 
     }
-  
+
   };
 
   const skip = () => {
@@ -164,26 +164,28 @@ export default function Home() {
         display={{ md: "flex", base: "none" }}
         alignItems={"center"}
         flexDir={"column"}
+        overflowX={'hidden'}
       >
-        <VStack w={"full"} className={"bg-color-right"} pt={150} pb={15}>
-          <HStack w={"full"} maxW={1200} mb={5} px={4}>
-            <Image src={imgMain} />
+        <VStack w={"full"} className={"bg-color-right"} pt={150} pb={15} id="home">
+          <HStack w={"full"} maxW={1200} mb={5} px={4} >
+            <Image src={imgMain} data-aos="fade-down" />
           </HStack>
-          <VStack mb={2.5}>
+          <VStack mb={2.5} pos={'relative'}>
+            <Box id="about" pos={'absolute'} top={'-150px'} />
             <Text fontSize={44} letterSpacing={1}>
               Бидний тухай
             </Text>
             <Image src={imgSeparator} maxW={750} />
           </VStack>
           <VStack maxW={1200} minW={750} mb={5} px={4}>
-            <Text fontSize={25} mb={4}>
-              We've 50 years' experience of crafting the finest quality coffee.
+            <div data-aos='fade-right'><Text fontSize={25} mb={4} >
+              We&apos;ve 50 years&apos; experience of crafting the finest quality coffee.
               From revolutionary methods and commitment to quality to
               unforgettable successes that have made Costa Coffee the Nation’s
               Favourite* coffee shop, our story is as unique as our coffee.
-            </Text>
+            </Text></div>
             <HStack>
-              <VStack alignItems={"start"}>
+              <VStack alignItems={"start"} flex={2} data-aos={'fade-right'}>
                 <Text fontSize={25} mb={1.25}>
                   But first, let’s start with how every good story should. At
                   the very beginning. The Costa Coffee story began back in 1971
@@ -196,7 +198,7 @@ export default function Home() {
                 </Text>
                 <MainButton
                   m={"0"}
-                  onClick={() => {}}
+                  onClick={() => { }}
                   bg="brown"
                   px={20}
                   py={5}
@@ -204,11 +206,14 @@ export default function Home() {
                   <Text fontSize={25}>READ MORE</Text>
                 </MainButton>
               </VStack>
-              <Image src={imgAbout} ml={12} />
+              <Box data-aos='fade-left'flex={1}>
+              <Image src={imgAbout} ml={12} w={'full'}/>
+              </Box>
             </HStack>
           </VStack>
         </VStack>
-        <VStack w={"full"} pos={"relative"} alignItems={"center"} px={4}>
+        <VStack w={"full"} pos={"relative"} alignItems={"center"} px={4} >
+          <Box id="product" pos={'absolute'} top={'-120px'} />
           <VStack mt={5} mb={10}>
             <Text fontSize={44} letterSpacing={1}>
               Products
@@ -225,18 +230,22 @@ export default function Home() {
           />
           {data.map((d, index) => {
             return (
+
               <Box
                 key={index}
                 w={"full"}
                 my={index != data.length - 1 ? 10 : 0}
+                data-aos={index % 2 == 0 ? "fade-left" : "fade-right"}
+
               >
+
                 <CoffeeCard
                   data={d}
                   index={index}
                   basket={() => {
-           
+
                     basket(d._id);
-                    
+
                   }}
                   quantity={counts[index]}
                   minus={() => {
@@ -255,7 +264,9 @@ export default function Home() {
                   }}
                   heart={baskets.includes(d._id)}
                 />
+
               </Box>
+
             );
           })}
         </VStack>
@@ -265,7 +276,8 @@ export default function Home() {
           mt={"-10%"}
           zIndex={-1}
         />
-        <VStack w={"full"} pt={5} className={"bg-color-right"}>
+        <VStack w={"full"} pt={5} className={"bg-color-right"} pos={'relative'}>
+          <Box id="place" pos={'absolute'} top={'-120px'} />
           <VStack mb={2.5}>
             <Text fontSize={44} letterSpacing={1}>
               Манай байршил
@@ -428,7 +440,7 @@ Mongolia"
           Good morning, Dagina!
         </Text>
         <Box pr={8} pl={3}>
-          <MainInput onChange={(value) => {}} />
+          <MainInput onChange={(value) => { }} />
         </Box>
 
         <HStack justifyContent={"space-between"} pr={5} mt={10} mb={6}>

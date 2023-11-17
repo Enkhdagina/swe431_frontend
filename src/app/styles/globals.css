@@ -7,10 +7,12 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 }
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -21,38 +23,93 @@
   }
 }
 
+
+
+@keyframes slide-in-bottom {
+  0% {
+    -webkit-transform: translateY(1000px);
+    transform: translateY(1000px);
+    opacity: 0;
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  0% {
+
+    transform: translateX(1000px);
+    opacity: 0;
+  }
+
+  100% {
+
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+
+    transform: translateX(-1000px);
+    opacity: 0;
+  }
+
+  100% {
+
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-bottom {
+
+  animation: slide-in-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.slide-in-left {
+
+  animation: slide-in-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.slide-in-right {
+
+  animation: slide-in-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to top,
+  background: linear-gradient(to top,
       #fff,
-      var(--bg-color)
-    );
+      var(--bg-color));
+
 }
 
 .bg-color {
-  background: linear-gradient(
-      to top,
+  background: linear-gradient(to top,
       #fff,
-      var(--bg-color)
-    ) !important;
+      var(--bg-color)) !important;
 }
+
 .bg-color-left {
-  background: linear-gradient(
-      to left,
+  background: linear-gradient(to left,
       #fff,
-      var(--bg-color)
-    ) !important;
+      var(--bg-color)) !important;
 }
+
 .bg-color-right {
-  background: linear-gradient(
-      to right,
+  background: linear-gradient(to right,
       #fff,
-      var(--bg-color)
-    ) !important;
+      var(--bg-color)) !important;
 }
+
 img {
-  width: 100%; 
+  width: 100%;
 }
 
 main {
@@ -64,8 +121,9 @@ main {
   main {
     padding: 0 30px;
   }
+
   .slick-track {
     padding-left: 20% !important;
   }
-  
+
 }

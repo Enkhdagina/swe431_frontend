@@ -17,9 +17,10 @@ type Types = {
   data: Order,
   add: () => void,
   minus: () => void,
+  basket?: boolean
 };
-const OrderBasketCard: FC<Types> = ({ data, add, minus }) => {
-  
+const OrderBasketCard: FC<Types> = ({ data, add, minus, basket = true }) => {
+
   return (
     <Box borderRadius={21} bg={"white"} w={"full"}>
       <HStack w={"full"} px={4} py={5}>
@@ -36,16 +37,16 @@ const OrderBasketCard: FC<Types> = ({ data, add, minus }) => {
           </VStack>
           <HStack w={"full"} justifyContent={'space-between'}>
             <Box />
-            <HStack w={'auto'}>
-              {data.quantity > 1 && <Button onClick={minus} m={0} p={0}>
+            <HStack w={'auto'} justifyContent={'center'}>
+              {data.quantity > 1 && basket && 1 && <Button onClick={minus} m={0} p={0}>
                 <Icon as={AiOutlineMinusCircle} color={"brown"} boxSize={30} />
               </Button>}
               <Text fontWeight={"semibold"} fontSize={27} px={2}>
                 {data.quantity}
               </Text>
-              <Button onClick={add} m={0} p={0}>
+              {basket && <Button onClick={add} m={0} p={0}>
                 <Icon as={AiOutlinePlusCircle} color={"brown"} boxSize={30} />
-              </Button>
+              </Button>}
             </HStack>
           </HStack>
         </VStack>

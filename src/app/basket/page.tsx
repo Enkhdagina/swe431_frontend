@@ -1,6 +1,6 @@
 "use client";
 import { imgEmpty, imgHeart } from "@/utils/assets";
-import { Box, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Image, SlideFade, Text, VStack } from "@chakra-ui/react";
 
 import Slider from "react-slick";
 import { useEffect, useState } from "react";
@@ -24,29 +24,29 @@ const BasketPage = () => {
   const dispatch = useAppDispatch();
   const [counts, setCounts] = useState<number[]>([]);
   const [cookies] = useCookies(['token'])
-  const [data, setData] = useState<Coffee[] >([])
+  const [data, setData] = useState<Coffee[]>([])
   const basket = async (id: string) => {
     if (cookies['token'] == undefined) {
       router.push("/auth");
     } else {
       dispatch(updateBasket(id));
       setData(data.filter((d) => d._id != id))
-     
+
       let res = await fetch(`${api}user/basket/${id}`, {
         method: "GET",
-        headers: {Authorization: `Bearer ${cookies['token']}`}
+        headers: { Authorization: `Bearer ${cookies['token']}` }
       })
       let json = await res.json()
- 
-      if(json.statusCode == undefined) {
 
-     
+      if (json.statusCode == undefined) {
+
+
       } else {
         console.log(json);
       }
 
     }
-  
+
   };
   const coffeeSliderSetting = {
     dots: true,
@@ -63,19 +63,19 @@ const BasketPage = () => {
   const router = useRouter();
   const getBasket = async () => {
     try {
-        setLoader(true)
+      setLoader(true)
       await fetch(`${api}product/basket`, {
         method: 'POST',
-        headers: {Authorization: `Bearer ${cookies['token']}`}
+        headers: { Authorization: `Bearer ${cookies['token']}` }
       }).then((d) => d.json()).then((d: Coffee[]) => {
-      
-            setData(d)
-            setCounts(Array.from(Array(d.length).fill(1)));
 
-      } )
+        setData(d)
+        setCounts(Array.from(Array(d.length).fill(1)));
+
+      })
       setLoader(false)
     } catch (error) {
-      
+
     }
   }
   useEffect(() => {
@@ -109,25 +109,25 @@ const BasketPage = () => {
       className="bg-color "
       w={"full"}
       pb={20}
-      
+
       px={4}
       pt={20}
     >
-     
-       
+
+
       {
         data.length == 0 && !loader ? <VStack w={'full'}>
-<Image src={imgEmpty} mt={120} px={12} mx={'auto'} maxW={400}/>
-        <Text fontSize={30} letterSpacing={'-0.02'}>Уучлаарай</Text>
-<Text fontSize={30} letterSpacing={'-0.02'}>Таны сагс хоосон байна!</Text>
+          <Image src={imgEmpty} mt={120} px={12} mx={'auto'} maxW={400} />
+          <Text fontSize={30} letterSpacing={'-0.02'}>Уучлаарай</Text>
+          <Text fontSize={30} letterSpacing={'-0.02'}>Таны сагс хоосон байна!</Text>
         </VStack> :
-      <Box w={'full'} position={"relative"} width={"full"} overflow={"hidden"}>
-      <Image src={imgHeart} px={12} mx={"auto"} maxW={400} />
-      <HStack w={"full"} mb={4}>
-        <Text>My lists</Text>
-      </HStack>
-     
-      </Box>}
+          <Box w={'full'} position={"relative"} width={"full"} overflow={"hidden"}>
+            <Image src={imgHeart} px={12} mx={"auto"} maxW={400} />
+            <HStack w={"full"} mb={4}>
+              <Text>My lists</Text>
+            </HStack>
+
+          </Box>}
       {data.length > 0 && <Box
         display={{ md: "flex", base: "none" }}
         alignItems={"center"}
@@ -138,14 +138,15 @@ const BasketPage = () => {
             key={index}
             w={"full"}
             my={index != data.length - 1 ? 10 : 0}
+            data-aos={index % 2 == 0 ? "fade-left" : "fade-right"}
           >
             <CoffeeCard
               data={d}
               index={index}
               basket={() => {
-       
+
                 basket(d._id);
-                
+
               }}
               quantity={counts[index]}
               minus={() => {
@@ -173,8 +174,9 @@ const BasketPage = () => {
         flexDir={"column"}
         display={{ md: "none", base: "flex" }}
         w={'full'}
-   
-      > <Box position={"relative"} width={"full"} overflow={"hidden"}>
+        
+
+      > <Box position={"relative"} width={"full"} overflow={"hidden"} >
           <link
             rel="stylesheet"
             type="text/css"
@@ -190,28 +192,31 @@ const BasketPage = () => {
             {...coffeeSliderSetting}
             ref={(slider) => setCoffeeSlider(slider)}
           >
-            {data.map((d, index) => {
-              return (
-                <Box
-                  key={index}
-                  position="relative"
-                  flexDir={"column"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  m={"auto"}
-                >
-                  <CoffeePhoneCard
-                    data={d}
-                    basket={() => {
-                      basket(d._id);
-                    }}
-                    heart={
-                     true
-                    }
-                  />
-                </Box>
-              );
-            })}
+          
+              {data.map((d, index) => {
+                return (
+                  <Box
+                    key={index}
+                    position="relative"
+                    flexDir={"column"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    m={"auto"}
+                   
+                  >
+                    <CoffeePhoneCard
+                      data={d}
+                      basket={() => {
+                        basket(d._id);
+                      }}
+                      heart={
+                        true
+                      }
+                    />
+                  </Box>
+                );
+              })}
+           
           </Slider>
         </Box> </Box>}
     </Box>

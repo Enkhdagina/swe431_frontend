@@ -4,7 +4,8 @@ import "./styles/globals.css";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import { theme } from "@/theme/chakra_theme";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 import ReduxProvider from "@/app/store/ReduxProvider";
 import { store, useAppDispatch } from "./store";
 import { useState, useEffect } from "react";
@@ -13,7 +14,16 @@ import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import { usePathname } from "next/navigation";
 import { CookiesProvider, useCookies } from "react-cookie";
+const AOSInit = () => {
+  useEffect(() => {
+    AOS.init({
+      easing: 'ease-out-quad',
+      duration: 1000,
+    });
+  }, [])
 
+  return null
+}
 export default function RootLayout({
   children,
 }: {
@@ -33,6 +43,7 @@ export default function RootLayout({
   const paths = pathname.split("/");
   useEffect(() => {
     setMounted(true);
+
   }, []);
 
   useEffect(() => {
@@ -62,16 +73,19 @@ export default function RootLayout({
   if (!mounted) {
     return (
       <html lang="en">
+        <head><link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" /></head>
         <body>
           <Box className="flex min-h-screen ">
             <Loader />
           </Box>
+          <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         </body>
       </html>
     );
   }
   return (
     <html lang="en">
+      <AOSInit />
       <body>
         <ReduxProvider>
           <CookiesProvider>
@@ -79,6 +93,7 @@ export default function RootLayout({
               {/* {isShow && <Navbar path={paths[1]} slug={paths[2]} title={title} />} */}
               <Navbar path={paths[1]} slug={paths[2]} title={title} />
               {children}
+
             </ChakraProvider>
           </CookiesProvider>
         </ReduxProvider>

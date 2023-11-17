@@ -31,7 +31,7 @@ import { imgCoffeePack, imgExit, imgLogo, imgMenu } from "@/utils/assets";
 
 import MainButton from "./Button";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { FaShoppingBasket } from "react-icons/fa";
 import { ImExit, ImHome3 } from "react-icons/im";
@@ -67,10 +67,24 @@ export default function Navbar({
     onClose();
     router.push("/auth");
   };
-
+  const [scrollY , setScrollY] = useState<number>(0)
+  const onScroll = useCallback((event : any) => {
+    const { pageYOffset, scrollY } = window;
+   
+    setScrollY(window.pageYOffset);
+}, []);
   useEffect(() => {
     setBaskets(store.getState().basket.ids);
   }, [slug]);
+
+   useEffect(() => {
+    //add eventlistener to window
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // remove event on unmount to prevent a memory leak with the cleanup
+    return () => {
+       window.removeEventListener("scroll", onScroll, { passive: true });
+    }
+  }, []);
 
   return (
     <HStack
@@ -80,13 +94,16 @@ export default function Navbar({
       pos={"fixed"}
       left={0}
       right={0}
-      top={5}
+      top={0}
+      paddingTop={5}
+      paddingBottom={5}
+      bg={scrollY > 10 ? 'white' : 'transparent'}
     >
       <HStack
         w={"full"}
         pt={1}
         px={8}
-        display={{ md: "flex", base: "none" }}
+        display={{ lg: "flex", base: "none" }}
         justifyContent={"space-between"}
       >
         <HStack visibility={"hidden"}>
@@ -98,12 +115,12 @@ export default function Navbar({
           </Link>
         </HStack>
         <HStack>
-          <Link href="/" px={6}>
+          <Link href="/#home" px={6}>
             <Text fontSize={21} letterSpacing={1}>
               Home
             </Text>
           </Link>
-          <Link href="/" px={6}>
+          <Link href="/#about" px={6}>
             <Text fontSize={21} letterSpacing={1}>
               About Us
             </Text>
@@ -111,12 +128,12 @@ export default function Navbar({
           <Link href="/" px={6}>
             <Image src={imgLogo} w={90} />
           </Link>
-          <Link href="/" px={6}>
+          <Link href="/#product" px={6}>
             <Text fontSize={21} letterSpacing={1}>
               Products
             </Text>
           </Link>
-          <Link href="/" px={6}>
+          <Link href="/#place" px={6}>
             <Text fontSize={21} letterSpacing={1}>
               Places
             </Text>
@@ -134,7 +151,7 @@ export default function Navbar({
           </Link>
         </HStack>
       </HStack>
-      <Button display={{ md: "none", base: "flex" }} onClick={onOpen}>
+      <Button display={{ lg: "none", base: "flex" }} onClick={onOpen}>
         <Image src={imgMenu} w={7} alt={"menu"} />
       </Button>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen} size={"xs"}>
@@ -246,7 +263,7 @@ export default function Navbar({
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-      <Text fontSize={31} display={{ md: "none" }} fontWeight={"bold"}>
+      <Text fontSize={31} display={{ lg: "none" }} fontWeight={"bold"}>
         {title}
       </Text>
 
@@ -269,7 +286,7 @@ export default function Navbar({
         </Button>
       ) : (
         <Button
-          display={{ md: "none", base: "flex" }}
+          display={{ lg: "none", base: "flex" }}
           onClick={() => router.push("/notification")}
         >
           <BellIcon

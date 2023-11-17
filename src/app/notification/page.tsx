@@ -49,7 +49,7 @@ const NotificationPage = () => {
             text: "Та үнэгүй кофе авах эрхтэй боллоо!",
           },
         ].map((d, index) => {
-          return <NotificationCard icon={d.icon} text={d.text} />;
+          return <NotificationCard icon={d.icon} text={d.text} key={index}/>;
         })}
       </VStack>
     </Box>
