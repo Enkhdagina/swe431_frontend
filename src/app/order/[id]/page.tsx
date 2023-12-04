@@ -10,7 +10,7 @@ import {
   Tabs,
   Text,
   useDisclosure,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import { BsMicFill } from "react-icons/bs";
 import { BiCurrentLocation } from "react-icons/bi";
@@ -19,7 +19,7 @@ import { useState, useEffect } from "react";
 import MainButton, { SupportButton } from "@/components/Button";
 import { OrderType, PaymentType } from "@/utils/enum";
 import PaymentCard from "@/components/card/payment";
-import { api, } from "@/utils/values";
+import { api } from "@/utils/values";
 import { currency } from "@/utils/function";
 import PaymentAlert from "@/components/order/Payment";
 import PaymentPaid from "@/components/order/Paid";
@@ -27,79 +27,80 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCookies } from "react-cookie";
 import { Payment } from "@/model/payment";
 import { Coffee } from "@/model/coffee";
-export default function OrderDetail({ params }: { params: { id: string, name: string } }) {
+export default function OrderDetail({
+  params,
+}: {
+  params: { id: string; name: string };
+}) {
   const [address, setAddress] = useState("");
-  const [cookies] = useCookies(['token'])
+  const [cookies] = useCookies(["token"]);
   const [type, setType] = useState(OrderType.HAND);
-  const [paymentTypes, setPaymentTypes] = useState<Payment[]>()
-  const [selectedPaymentType, setPaymentType] = useState<PaymentType>()
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [success, setSuccess] = useState(false)
-  const router = useRouter()
+  const [paymentTypes, setPaymentTypes] = useState<Payment[]>();
+  const [selectedPaymentType, setPaymentType] = useState<PaymentType>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [success, setSuccess] = useState(false);
+  const router = useRouter();
   const query = useSearchParams();
-  const [product, setProduct] = useState<Coffee>()
-  const [loading, setLoading] = useState<boolean>(false)
+  const [product, setProduct] = useState<Coffee>();
+  const [loading, setLoading] = useState<boolean>(false);
   const getPayment = async () => {
     try {
       await fetch(`${api}payment/user`, {
-        method: 'GET',
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies['token']}`
+          Authorization: `Bearer ${cookies["token"]}`,
         },
-      }).then((d) => d.json()).then((d: Payment[]) => {
-        if (d.length != undefined && d?.length > 0) {
-          setPaymentTypes(d),
-            setPaymentType(d[0].type)
-        }
       })
+        .then((d) => d.json())
+        .then((d: Payment[]) => {
+          if (d.length != undefined && d?.length > 0) {
+            setPaymentTypes(d), setPaymentType(d[0].type);
+          }
+        });
 
       await fetch(`${api}product/${params.id}`, {
-        method: 'GET',
-
-      }).then((d) => d.json()).then((d: Coffee) => {
-
-        setProduct(d)
-
-
+        method: "GET",
       })
-
-    } catch (error) {
-
-    }
-  }
+        .then((d) => d.json())
+        .then((d: Coffee) => {
+          setProduct(d);
+        });
+    } catch (error) {}
+  };
   useEffect(() => {
-    getPayment()
+    getPayment();
   }, []);
   const order = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
+
       await fetch(`${api}order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies['token']}`
+          Authorization: `Bearer ${cookies["token"]}`,
         },
         body: JSON.stringify({
-          quantity: query.get('name'),
+          quantity: query.get("name"),
           product: params.id,
           address: address,
           type: type,
           payment: selectedPaymentType,
-          
-        })
-      }).then((d) => d.json()).then((d) => {
-        setSuccess(true)
-        console.log(d);
+        }),
       })
-      setLoading(false)
+        .then((d) => d.json())
+        .then((d) => {
+          setSuccess(true);
+          console.log(d);
+        });
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
-
+      setLoading(false);
     }
-  }
-  if (cookies['token'] == undefined) {
-    return router.push('/auth')
+  };
+  if (cookies["token"] == undefined) {
+    return router.push("/auth");
   }
   return (
     <Box
@@ -110,10 +111,17 @@ export default function OrderDetail({ params }: { params: { id: string, name: st
       zIndex={10}
       alignItems={"center"}
       w={"full"}
-
     >
-      <Tabs isFitted variant="enclosed" w={"full"}  >
-        <TabList mb="1em" justifyContent={'center'} className="bg-color" mx={'auto'} pt={{ md: 32, base: 20 }} border={"none"} px={{ md: 10, base: 4 }}>
+      <Tabs isFitted variant="enclosed" w={"full"}>
+        <TabList
+          mb="1em"
+          justifyContent={"center"}
+          className="bg-color"
+          mx={"auto"}
+          pt={{ md: 32, base: 20 }}
+          border={"none"}
+          px={{ md: 10, base: 4 }}
+        >
           <Tab
             maxW={400}
             fontSize={22}
@@ -133,7 +141,7 @@ export default function OrderDetail({ params }: { params: { id: string, name: st
             Авч явах
           </Tab>
         </TabList>
-        <TabPanels py={3.5} px={5} maxW={800} mx={'auto'}>
+        <TabPanels py={3.5} px={5} maxW={800} mx={"auto"}>
           <TabPanel>
             <HStack justifyContent={"space-between"} mb={6}>
               <Text
@@ -208,11 +216,21 @@ export default function OrderDetail({ params }: { params: { id: string, name: st
               </Text>
             </HStack>
 
-            <PaymentAlert isOpen={isOpen} onClose={onClose} setState={(value) => {
-              setPaymentType(value)
-            }} type={selectedPaymentType} payments={paymentTypes} />
+            <PaymentAlert
+              isOpen={isOpen}
+              onClose={onClose}
+              setState={(value) => {
+                setPaymentType(value);
+              }}
+              type={selectedPaymentType}
+              payments={paymentTypes}
+            />
 
-            <PaymentCard onClick={onOpen} data={paymentTypes} type={selectedPaymentType} />
+            <PaymentCard
+              onClick={onOpen}
+              data={paymentTypes}
+              type={selectedPaymentType}
+            />
 
             <HStack justifyContent={"space-between"} my={6}>
               <Text
@@ -232,34 +250,61 @@ export default function OrderDetail({ params }: { params: { id: string, name: st
               <Text fontWeight={"semibold"} color={"blackAlpha.700"}>
                 Price
               </Text>
-              <Text color={"brown"}>{currency(((product?.price ?? 0) * Number.parseInt(query.get('name') ?? '1')).toString())}</Text>
+              <Text color={"brown"}>
+                {currency(
+                  (
+                    (product?.price ?? 0) *
+                    Number.parseInt(query.get("name") ?? "1")
+                  ).toString()
+                )}
+              </Text>
             </HStack>
             <HStack w={"full"} justifyContent={"space-between"} mb={1}>
               <Text fontWeight={"semibold"} color={"blackAlpha.700"}>
                 Shipping Charges
               </Text>
-              <Text color={"brown"}>{currency(((product?.price ?? 10) * 0.1 * Number.parseInt(query.get('name') ?? '1')).toString())}</Text>
+              <Text color={"brown"}>
+                {currency(
+                  (
+                    (product?.price ?? 10) *
+                    0.1 *
+                    Number.parseInt(query.get("name") ?? "1")
+                  ).toString()
+                )}
+              </Text>
             </HStack>
             <HStack w={"full"} justifyContent={"space-between"} mb={1}>
               <Text fontWeight={"semibold"} color={"green"}>
                 Price
               </Text>
-              <Text color={"green"}>{currency(((product?.price ?? 10) * 1.1 * Number.parseInt(query.get('name') ?? '1')).toString())}</Text>
+              <Text color={"green"}>
+                {currency(
+                  (
+                    (product?.price ?? 10) *
+                    1.1 *
+                    Number.parseInt(query.get("name") ?? "1")
+                  ).toString()
+                )}
+              </Text>
             </HStack>
 
             <MainButton onClick={order} px={12} bg="blue">
-              {
-                loading ? <Spinner /> : <Text color={"white"} fontWeight={"bold"}>
+              {loading ? (
+                <Spinner />
+              ) : (
+                <Text color={"white"} fontWeight={"bold"}>
                   Болсон
                 </Text>
-              }
+              )}
             </MainButton>
-            <PaymentPaid isOpen={success} onClose={() => {
-              router.push('/order')
-            }} />
+            <PaymentPaid
+              isOpen={success}
+              onClose={() => {
+                router.push("/order");
+              }}
+            />
           </TabPanel>
           <TabPanel justifyContent={"center"} alignItems={"center"} w="full">
-
             <Text textAlign={"center"}>Тун удахгүй</Text>
           </TabPanel>
         </TabPanels>
