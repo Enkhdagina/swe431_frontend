@@ -18,6 +18,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "aos": "^2.3.4",
     "bcryptjs": "^2.4.3",
+    "cookies-next": "^4.1.0",
     "framer-motion": "^10.16.4",
     "jose": "^4.15.4",
     "mongoose": "^7.6.3",

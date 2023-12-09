@@ -38,7 +38,7 @@ import { ImExit, ImHome3 } from "react-icons/im";
 import { BsPersonCircle } from "react-icons/bs";
 import { store, useAppDispatch } from "@/app/store";
 import { updateBasket } from "@/app/store/slices/basketSlice";
-import { useCookies } from "react-cookie";
+import { getCookie, deleteCookie, setCookie } from 'cookies-next'
 
 
 export default function Navbar({
@@ -51,7 +51,7 @@ export default function Navbar({
   slug: string;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [cookies, setCookies, removeCookie] = useCookies(["token"]);
+  const token = getCookie("token");
 
   const router = useRouter();
 
@@ -62,27 +62,27 @@ export default function Navbar({
     setBaskets(store.getState().basket.ids);
   };
   const logout = () => {
-    removeCookie("token");
- 
+    deleteCookie("token");
+
     onClose();
     router.push("/auth");
   };
-  const [scrollY , setScrollY] = useState<number>(0)
-  const onScroll = useCallback((event : any) => {
+  const [scrollY, setScrollY] = useState<number>(0)
+  const onScroll = useCallback((event: any) => {
     const { pageYOffset, scrollY } = window;
-   
+
     setScrollY(window.pageYOffset);
-}, []);
+  }, []);
   useEffect(() => {
     setBaskets(store.getState().basket.ids);
   }, [slug]);
 
-   useEffect(() => {
+  useEffect(() => {
     //add eventlistener to window
     window.addEventListener("scroll", onScroll, { passive: true });
     // remove event on unmount to prevent a memory leak with the cleanup
     return () => {
-       window.removeEventListener("scroll", onScroll, { passive: true });
+      window.removeEventListener("scroll", onScroll, { passive: true });
     }
   }, []);
 
@@ -144,7 +144,7 @@ export default function Navbar({
             <Icon as={AiOutlineHeart} boxSize={27} mr={2} />
           </Link>
           <Link href="/order">
-            <Icon as={FaShoppingBasket} boxSize={27} mr={2}/>
+            <Icon as={FaShoppingBasket} boxSize={27} mr={2} />
           </Link>
           <Link onClick={logout}>
             <Icon as={ImExit} boxSize={27} />

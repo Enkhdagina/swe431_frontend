@@ -38,9 +38,9 @@ export function statusValue(status: OrderStatus) {
 }
 export function typeValue(type: OrderType) {
     switch (type) {
-        case OrderType.DOOR:
-            return "Гар дээр авах"
         case OrderType.HAND:
+            return "Гар дээр авах"
+        case OrderType.DOOR:
             return "Үүдэнд тавих"
 
     }

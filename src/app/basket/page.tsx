@@ -10,7 +10,7 @@ import Loader from "@/components/Loader";
 import { store, useAppDispatch } from "../store";
 import { updateBasket } from "../store/slices/basketSlice";
 
-import { useCookies } from "react-cookie";
+import { getCookie } from 'cookies-next'
 import { Coffee } from "@/model/coffee";
 import { api } from "@/utils/values";
 import { User } from "@/model/user";
@@ -23,10 +23,10 @@ const BasketPage = () => {
   const [mounted, setMounted] = useState(false);
   const dispatch = useAppDispatch();
   const [counts, setCounts] = useState<number[]>([]);
-  const [cookies] = useCookies(['token'])
+  const token = getCookie('token')
   const [data, setData] = useState<Coffee[]>([])
   const basket = async (id: string) => {
-    if (cookies['token'] == undefined) {
+    if (token == undefined) {
       router.push("/auth");
     } else {
       dispatch(updateBasket(id));
@@ -34,7 +34,7 @@ const BasketPage = () => {
 
       let res = await fetch(`${api}user/basket/${id}`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${cookies['token']}` }
+        headers: { Authorization: `Bearer ${token}` }
       })
       let json = await res.json()
 
@@ -66,7 +66,7 @@ const BasketPage = () => {
       setLoader(true)
       await fetch(`${api}product/basket`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${cookies['token']}` }
+        headers: { Authorization: `Bearer ${token}` }
       }).then((d) => d.json()).then((d: Coffee[]) => {
 
         setData(d)
@@ -83,7 +83,7 @@ const BasketPage = () => {
 
   }, []);
   useEffect(() => {
-    if (cookies['token'] == undefined) {
+    if (token == undefined) {
       router.push("/auth");
     }
     else {
@@ -174,7 +174,7 @@ const BasketPage = () => {
         flexDir={"column"}
         display={{ md: "none", base: "flex" }}
         w={'full'}
-        
+
 
       > <Box position={"relative"} width={"full"} overflow={"hidden"} >
           <link
@@ -192,31 +192,31 @@ const BasketPage = () => {
             {...coffeeSliderSetting}
             ref={(slider) => setCoffeeSlider(slider)}
           >
-          
-              {data.map((d, index) => {
-                return (
-                  <Box
-                    key={index}
-                    position="relative"
-                    flexDir={"column"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    m={"auto"}
-                   
-                  >
-                    <CoffeePhoneCard
-                      data={d}
-                      basket={() => {
-                        basket(d._id);
-                      }}
-                      heart={
-                        true
-                      }
-                    />
-                  </Box>
-                );
-              })}
-           
+
+            {data.map((d, index) => {
+              return (
+                <Box
+                  key={index}
+                  position="relative"
+                  flexDir={"column"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  m={"auto"}
+
+                >
+                  <CoffeePhoneCard
+                    data={d}
+                    basket={() => {
+                      basket(d._id);
+                    }}
+                    heart={
+                      true
+                    }
+                  />
+                </Box>
+              );
+            })}
+
           </Slider>
         </Box> </Box>}
     </Box>

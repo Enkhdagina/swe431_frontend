@@ -13,7 +13,7 @@ import { Box } from "@chakra-ui/react";
 import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import { usePathname } from "next/navigation";
-import { CookiesProvider, useCookies } from "react-cookie";
+import { getCookie } from 'cookies-next'
 const AOSInit = () => {
   useEffect(() => {
     AOS.init({
@@ -30,9 +30,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   // const dispatch = useAppDispatch();
-  const [cookies] = useCookies(["token"]);
+  const token = getCookie("token");
   useEffect(() => {
-    if (cookies != null || cookies != undefined || cookies != "") {
+    if (token != null || token != undefined || token != "") {
       // dispatch(setToken(cookies.token));
     }
   }, []);
@@ -88,14 +88,14 @@ export default function RootLayout({
       <AOSInit />
       <body>
         <ReduxProvider>
-          <CookiesProvider>
-            <ChakraProvider theme={theme}>
-              {/* {isShow && <Navbar path={paths[1]} slug={paths[2]} title={title} />} */}
-              <Navbar path={paths[1]} slug={paths[2]} title={title} />
-              {children}
 
-            </ChakraProvider>
-          </CookiesProvider>
+          <ChakraProvider theme={theme}>
+            {/* {isShow && <Navbar path={paths[1]} slug={paths[2]} title={title} />} */}
+            <Navbar path={paths[1]} slug={paths[2]} title={title} />
+            {children}
+
+          </ChakraProvider>
+
         </ReduxProvider>
       </body>
     </html>

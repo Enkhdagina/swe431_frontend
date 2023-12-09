@@ -24,7 +24,7 @@ import { currency } from "@/utils/function";
 import PaymentAlert from "@/components/order/Payment";
 import PaymentPaid from "@/components/order/Paid";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCookies } from "react-cookie";
+import {getCookie} from 'cookies-next'
 import { Payment } from "@/model/payment";
 import { Coffee } from "@/model/coffee";
 export default function OrderDetail({
@@ -33,7 +33,7 @@ export default function OrderDetail({
   params: { id: string; name: string };
 }) {
   const [address, setAddress] = useState("");
-  const [cookies] = useCookies(["token"]);
+  const token = getCookie("token");
   const [type, setType] = useState(OrderType.HAND);
   const [paymentTypes, setPaymentTypes] = useState<Payment[]>();
   const [selectedPaymentType, setPaymentType] = useState<PaymentType>();
@@ -49,7 +49,7 @@ export default function OrderDetail({
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies["token"]}`,
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((d) => d.json())
@@ -79,7 +79,7 @@ export default function OrderDetail({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies["token"]}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           quantity: query.get("name"),
@@ -99,7 +99,7 @@ export default function OrderDetail({
       setLoading(false);
     }
   };
-  if (cookies["token"] == undefined) {
+  if (token == undefined) {
     return router.push("/auth");
   }
   return (

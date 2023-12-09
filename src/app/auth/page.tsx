@@ -25,13 +25,13 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useCookies } from "react-cookie";
+
 import { AiOutlineMail } from "react-icons/ai";
 import { BsFacebook, BsGithub, BsGoogle } from "react-icons/bs";
 import { FaUser, FaUserSecret } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { useDispatch } from "react-redux";
-
+import { getCookie , setCookie} from 'cookies-next'
 import { api } from "@/utils/values";
 
 
@@ -45,7 +45,7 @@ type Types = {
 };
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [cookies, setCookies] = useCookies(["token"]);
+  const token = getCookie("token");
   const dispatch = useDispatch();
   const [data, setData] = useState<Types>({
     username: "",
@@ -55,7 +55,7 @@ const Auth = () => {
     message: "",
   });
   const router = useRouter();
- 
+
   const login = async () => {
     try {
       let res = await fetch(`${api}auth/login`, {
@@ -70,10 +70,10 @@ const Auth = () => {
       });
       let json = await res.json();
       if (json.access_token != undefined && json.access_token != null) {
-        setCookies("token", json.access_token);
-   
-    
-   
+        setCookie("token", json.access_token);
+
+
+
         router.back();
       } else {
         setData((prev) => ({
@@ -81,38 +81,38 @@ const Auth = () => {
           message: "Нэвтрэх нэр, нууц үгээ шалгана уу",
         }));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   const register = async () => {
     try {
-     if(data.password != data.repeatPassword && data.password.length < 6 ) {
-      setData((prev)=> ({...prev, message: 'Нууц үгээ шалгана уу'}))
-     } else {
-      let res = await fetch(`${api}auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: data.username,
-          password: data.password,
-          email: data.email
-        }),
-      });
-      let json = await res.json();
-      if (json.access_token != undefined && json.access_token != null) {
-        setCookies("token", json.access_token);
-
-    
-        router.back();
+      if (data.password != data.repeatPassword && data.password.length < 6) {
+        setData((prev) => ({ ...prev, message: 'Нууц үгээ шалгана уу' }))
       } else {
-        setData((prev) => ({
-          ...prev,
-          message: "Мэдээллээ шалгана уу",
-        }));
+        let res = await fetch(`${api}auth/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: data.username,
+            password: data.password,
+            email: data.email
+          }),
+        });
+        let json = await res.json();
+        if (json.access_token != undefined && json.access_token != null) {
+          setCookie("token", json.access_token);
+
+
+          router.back();
+        } else {
+          setData((prev) => ({
+            ...prev,
+            message: "Мэдээллээ шалгана уу",
+          }));
+        }
       }
-     }
-    } catch (error) {}
+    } catch (error) { }
   };
   return (
     <VStack w={"full"} className={"bg-color-left"} minH={"100vh"} pt={150}>

@@ -18,7 +18,7 @@ import { GiCancel } from "react-icons/gi";
 import { store, useAppDispatch } from "../store";
 import { updateBasket } from "../store/slices/basketSlice";
 import { api, imgUrl } from "@/utils/values";
-import { useCookies } from "react-cookie";
+import {getCookie} from 'cookies-next'
 import { useRouter } from "next/navigation";
 import { Order } from "@/model/order";
 import { currency, orderPaymentValue, statusValue, typeValue } from "@/utils/function";
@@ -26,13 +26,13 @@ import { OrderPaymentType } from "@/utils/enum";
 export default function Order() {
   // const [baskets, setBaskets]  =  useState(store.getState().basket.ids);
   // const dispatch = useAppDispatch();
-  const [cookies] = useCookies(["token"]);
+  const token = getCookie("token");
   const [data, setData] = useState<Order[]>();
   const getData = async () => {
     try {
       await fetch(`${api}order/user`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${cookies["token"]}` },
+        headers: { Authorization: `Bearer ${token}` },
       }).then((d) => d.json()).then((d: Order[]) => {
         setData(d)
 
@@ -41,7 +41,7 @@ export default function Order() {
   };
   const router = useRouter();
   useEffect(() => {
-    if (cookies["token"] == undefined) {
+    if (token == undefined) {
       router.push("/auth");
     } else {
       getData();

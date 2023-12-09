@@ -5,17 +5,17 @@ import { Box, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { store, useAppDispatch } from "../store";
 import { useRouter } from "next/navigation";
-import { useCookies } from "react-cookie";
+import { getCookie } from 'cookies-next'
 
 const NotificationPage = () => {
   const dispatch = useAppDispatch();
-  const [cookies] = useCookies(['token'])
+  const token = getCookie('token')
   const router = useRouter();
   useEffect(() => {
-    if (cookies['token'] == undefined) {
+    if (token == undefined) {
       router.push("/auth");
     }
-  }, [cookies['token']]);
+  }, [token]);
   return (
     <Box
       pos={"relative"}
@@ -49,7 +49,7 @@ const NotificationPage = () => {
             text: "Та үнэгүй кофе авах эрхтэй боллоо!",
           },
         ].map((d, index) => {
-          return <NotificationCard icon={d.icon} text={d.text} key={index}/>;
+          return <NotificationCard icon={d.icon} text={d.text} key={index} />;
         })}
       </VStack>
     </Box>

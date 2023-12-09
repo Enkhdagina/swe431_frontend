@@ -7,7 +7,7 @@ import Slider from "react-slick";
 import { setShow, setView } from "./store/slices/splashSlice";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loader";
-import { Box, HStack, Text, Link, Image, VStack, Icon, SlideFade } from "@chakra-ui/react";
+import { Box, HStack, Text, Link, Image, VStack, Icon, SlideFade, Button } from "@chakra-ui/react";
 import CoffeePhoneCard from "@/components/card/coffee_phone";
 import { Coffee } from "@/model/coffee";
 import MainInput from "@/components/Input";
@@ -30,12 +30,13 @@ import { BiLogoFacebookCircle } from "react-icons/bi";
 import { FaInstagramSquare, FaTwitter } from "react-icons/fa";
 import { ImYoutube } from "react-icons/im";
 import { api } from "@/utils/values";
-import { useCookies } from "react-cookie";
+import { getCookie, deleteCookie } from "cookies-next";
+
 
 export default function Home() {
   const isShow = store.getState().splash.isShow;
   const [baskets, setBaskets] = useState(store.getState().basket.ids ?? []);
-  const [cookies] = useCookies(['token'])
+  const token = getCookie('token')
   const [mounted, setMounted] = useState(false);
   const dispatch = useAppDispatch();
   const [coffeeSlider, setCoffeeSlider] = useState<Slider | null>(null);
@@ -54,6 +55,7 @@ export default function Home() {
       }).then((d) => d.json()).then((d: string[]) => {
         dispatch(setBasket(d));
         setBaskets(store.getState().basket.ids)
+      
 
       })
     } catch (error) {
@@ -73,12 +75,7 @@ export default function Home() {
 
   }, []);
 
-  useEffect(() => {
-    if (cookies['token'] != undefined) {
 
-      getBasket(cookies['token'])
-    }
-  }, [cookies['token']]);
 
   const next = () => {
     if (active < 1) {
@@ -100,7 +97,7 @@ export default function Home() {
   };
 
   const basket = async (id: string) => {
-    if (cookies['token'] == undefined) {
+    if (token == undefined) {
       router.push("/auth");
     } else {
       dispatch(updateBasket(id));
@@ -108,7 +105,7 @@ export default function Home() {
 
       let res = await fetch(`${api}user/basket/${id}`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${cookies['token']}` }
+        headers: { Authorization: `Bearer ${token}` }
       })
       let json = await res.json()
 
@@ -160,6 +157,7 @@ export default function Home() {
     // </div>
 
     <Box>
+      {/* <Button onClick={() => deleteCookie(`token`)}>onClick</Button> */}
       <Box
         display={{ md: "flex", base: "none" }}
         alignItems={"center"}
@@ -262,7 +260,7 @@ export default function Home() {
                       [index]: counts[index] + 1,
                     }));
                   }}
-                  heart={baskets.includes(d._id)}
+                  heart={baskets?.includes(d._id)}
                 />
 
               </Box>
